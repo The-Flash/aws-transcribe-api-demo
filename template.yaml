@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   AWS SAM Starter template
@@ -8,34 +8,12 @@ Globals:
     Runtime: nodejs16.x
     Timeout: 3
 
-Parameters:
-  REGION:
-    Type: String
-    Default: "us-east-1"
-
 Resources:
-  ShutdownFunction:
+  HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/shutdown
+      CodeUri: src/
       Handler: app.lambdaHandler
-      Policies:
-        - EC2DescribePolicy: {}
-        - Statement:
-            - Sid: TerminateEC2InstancePolicy
-              Effect: Allow
-              Action:
-                - ec2:TerminateInstances
-              Resource: "*"
-      Events:
-        ScheduledEvent:
-          Type: Schedule
-          Properties:
-            Schedule: rate(2 minutes)
-            Enabled: True
-      Environment:
-        Variables:
-          Region: !Ref REGION
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -45,6 +23,6 @@ Resources:
           - app.ts
 
 Outputs:
-  ShutdownFunction:
-    Description: "Shutdown Lambda Function ARN"
-    Value: !GetAtt ShutdownFunction.Arn
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
