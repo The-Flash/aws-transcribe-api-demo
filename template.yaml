@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   AWS SAM Starter template
@@ -6,9 +6,47 @@ Description: >
 Globals:
   Function:
     Runtime: nodejs16.x
-    Timeout: 3
+    Timeout: 30
 
 Resources:
+  TranscribeFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: transcriber.lambdaHandler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /transcribe
+            Method: post
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        EntryPoints:
+          - transcriber.ts
+
+  GetSignedURLFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: get-signed-url.lambdaHandler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /get-signed-url
+            Method: get
+
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        EntryPoints:
+          - get-signed-url.ts
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -22,7 +60,4 @@ Resources:
         EntryPoints:
           - app.ts
 
-Outputs:
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
+
